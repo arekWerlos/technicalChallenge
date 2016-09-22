@@ -1,4 +1,4 @@
-package algorithm;
+package com.gft.algorithm;
 
 import java.util.Arrays;
 import java.util.Iterator;
