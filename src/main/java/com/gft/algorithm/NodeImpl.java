@@ -21,19 +21,7 @@ public final class NodeImpl implements Node {
 
     @Override
     public Iterator<Node> iterator() {
-        return new Iterator<Node>() {
-            @Override
-            public boolean hasNext() {
-                if (!childrenList.isEmpty() && childrenList.iterator().next() != null) {
-                    return true;
-                }
-                return false;
-            }
-            @Override
-            public Node next() {
-                return childrenList.iterator().next();
-            }
-        };
+        return childrenList.iterator();
     }
 
 
