@@ -1,10 +1,14 @@
 package com.gft.algorithm;
 
+import org.assertj.core.util.Lists;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.io.File;
+import java.util.Arrays;
 import java.util.Iterator;
 
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
 
@@ -14,8 +18,8 @@ import static org.hamcrest.core.IsEqual.equalTo;
 public class NodeSupportTest {
 
     @Test
-    public void shouldCheckIfNextNodesDoesntExists() {
-        Node root = new NodeImpl(null);
+    public void shouldCheckIfNextNodesDoesntExist() {
+        Node root = new NodeImpl();
 
         Iterator<Node> result = NodeSupport.convert(root).iterator();
 
@@ -23,17 +27,19 @@ public class NodeSupportTest {
     }
 
     @Test
-    public void shouldCheckIfNextNodesDoesExists() {
-        Node root = new NodeImpl(new NodeImpl(null));
+    public void shouldCheckIfNextNodesDoesExist() {
+        Node child = new NodeImpl();
+        Node root = new NodeImpl(child);
 
         Iterator<Node> result = NodeSupport.convert(root).iterator();
 
         Assert.assertThat(result.hasNext(), is(equalTo(true)));
+        Assert.assertThat(result.next(), is(equalTo(child)));
     }
 
     @Test
     public void shouldReturnNextExpectedNode() {
-        Node child1 = new NodeImpl(null);
+        Node child1 = new NodeImpl();
         Node root = new NodeImpl(child1);
 
         Iterator<Node> result = NodeSupport.convert(root).iterator();
@@ -43,16 +49,14 @@ public class NodeSupportTest {
 
     @Test
     public void shouldReturnNextFewExpectedNodes() {
-        Node child1 = new NodeImpl(null);
-        Node child2 = new NodeImpl(null);
-        Node child3 = new NodeImpl(null);
+        Node child1 = new NodeImpl();
+        Node child2 = new NodeImpl();
+        Node child3 = new NodeImpl();
         Node root = new NodeImpl(child1, child2, child3);
 
         Iterator<Node> result = NodeSupport.convert(root).iterator();
 
-        Assert.assertThat(result.next(), is(equalTo(child1)));
-        Assert.assertThat(result.next(), is(equalTo(child2)));
-        Assert.assertThat(result.next(), is(equalTo(child3)));
+        Assert.assertThat(Lists.newArrayList(result), containsInAnyOrder(child1, child2, child3));
     }
 
     @Test
@@ -62,9 +66,22 @@ public class NodeSupportTest {
         Node root = new NodeImpl(child);
 
         Iterator<Node> result = NodeSupport.convert(root).iterator();
-        Iterator<Node> nestedResult = NodeSupport.convert(result.next()).iterator();
 
-        Assert.assertThat(nestedResult.next(), is(equalTo(nestedChild)));
+        Assert.assertThat(Lists.newArrayList(result), containsInAnyOrder(nestedChild, child));
     }
+
+    @Test
+    public void shouldReturnNestedNodesTwo() {
+        Node nestedChild = new NodeImpl();
+        Node nestedChild2 = new NodeImpl();
+        Node child = new NodeImpl(nestedChild,nestedChild2);
+        Node root = new NodeImpl(child);
+
+        Iterator<Node> result = NodeSupport.convert(root).iterator();
+
+        Assert.assertThat(Lists.newArrayList(result), containsInAnyOrder(nestedChild, child));
+    }
+
+
 
 }

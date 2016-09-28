@@ -20,9 +20,8 @@ public final class NodeImpl implements Node {
     }
 
     @Override
-    public Iterator<Node> iterator() {
-        return childrenList.iterator();
+    public List<Node> getChildrenList() {
+        return childrenList;
     }
-
 
 }
