@@ -1,7 +1,7 @@
 package com.gft.algorithm;
 
-import java.util.Collections;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Stack;
 
 /**
@@ -29,68 +29,40 @@ public final class NodeSupport {
 
     static class IteratorImpl implements Iterator<Node> {
 
-        private Node current;
         private Stack<Iterator<Node>> stack = new Stack<>();
-        private Iterator<Node> childrenIterator;
 
         public IteratorImpl(Node root) {
-            this.current = root;
-            if (root.getChildrenList().iterator().hasNext()) {
-                this.childrenIterator = root.getChildrenList().iterator();
-            } else {
-                this.childrenIterator = Collections.emptyIterator();
+            if (root.getChildrenList() != null) {
+                stack.push(root.getChildrenList().iterator()) ;
             }
         }
 
         @Override
         public boolean hasNext() {
-            return childrenIterator.hasNext();
+            boolean hasNext = false;
+            if (!stack.isEmpty()) {
+                Iterator<Node> iterator = stack.pop();
+                stack.push(iterator);
+                hasNext = iterator.hasNext();
+            }
+            return hasNext;
         }
 
         @Override
         public Node next() {
-            Iterator<Node> grandChildrenIterator = getGrandChildrenIterator();
-
-            if (grandChildrenIterator != null) {
-
-                if (grandChildrenIterator.hasNext()) {
-                    stack.push(grandChildrenIterator);
-                }
-                return current;
-            } else if (!stack.isEmpty()) {
-                Iterator<Node> poppedIterator = stack.pop();
-
-                if (poppedIterator.hasNext()) {
-                    stack.push(poppedIterator);
-                    return poppedIterator.next();
-                } else {
-                    while (!stack.isEmpty()) {
-                        poppedIterator = stack.pop();
-                        if (poppedIterator.hasNext()) {
-                            return poppedIterator.next();
-                        }
+            while (!stack.isEmpty()) {
+                Iterator<Node> iterator = stack.pop();
+                if (iterator.hasNext()) {
+                    Node node = iterator.next();
+                    stack.push(iterator);
+                    if (node.getChildrenList().iterator().hasNext()) {
+                        stack.push(node.getChildrenList().iterator());
                     }
-
+                    return node;
                 }
             }
-            return null;
+            throw new NoSuchElementException();
         }
-
-        private Iterator<Node> getGrandChildrenIterator() {
-
-            if (childrenIterator.hasNext()) {
-
-                if (!stack.contains(childrenIterator)) {
-                    stack.push(childrenIterator);
-                }
-                this.current = childrenIterator.next();
-                return current.getChildrenList().iterator();
-            }
-            return null;
-        }
-
-
-
     }
 
 

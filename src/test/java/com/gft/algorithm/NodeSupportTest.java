@@ -8,6 +8,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Iterator;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsEqual.equalTo;
@@ -62,26 +63,13 @@ public class NodeSupportTest {
     @Test
     public void shouldReturnNestedNodes() {
         Node nestedChild = new NodeImpl();
-        Node child = new NodeImpl(nestedChild);
-        Node root = new NodeImpl(child);
-
-        Iterator<Node> result = NodeSupport.convert(root).iterator();
-
-        Assert.assertThat(Lists.newArrayList(result), containsInAnyOrder(nestedChild, child));
-    }
-
-    @Test
-    public void shouldReturnNestedNodesTwo() {
-        Node nestedChild = new NodeImpl();
         Node nestedChild2 = new NodeImpl();
         Node child = new NodeImpl(nestedChild,nestedChild2);
         Node root = new NodeImpl(child);
 
         Iterator<Node> result = NodeSupport.convert(root).iterator();
 
-        Assert.assertThat(Lists.newArrayList(result), containsInAnyOrder(nestedChild, child));
+        assertThat(result).containsOnly(child, nestedChild, nestedChild2);
     }
-
-
 
 }
